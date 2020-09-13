@@ -1,25 +1,63 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useLocalStorage } from 'react-use';
 
-function App() {
+import { ClientContext } from './Context';
+import { Client } from './Client';
+
+
+const App = () => {
+  const [apiDetails, setApiDetails, removeApiDetails] = useLocalStorage(
+    'api-config', {baseUrl: '', clientId: '', secret: ''}
+  );
+
+  const updateApiDetail = (event) => {
+    const newApiDetails = {
+      ...apiDetails,
+      [event.target.name]: event.target.value
+    };
+    setApiDetails(newApiDetails);
+  };
+
+  const client = new Client(apiDetails.baseUrl, apiDetails.clientId, apiDetails.secret);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <ClientContext.Provider value={client}>
+
+      <header>
+        <h1>Catalogus browser</h1>
+        <h2>Configuratie</h2>
+
+        <input
+          type="text"
+          name="baseUrl"
+          value={apiDetails.baseUrl}
+          placeholder="Catalogi API root"
+          onChange={updateApiDetail}
+        />
+
+        <input
+          type="text"
+          name="clientId"
+          value={apiDetails.clientId}
+          placeholder="Client ID"
+          onChange={updateApiDetail}
+        />
+
+        <input
+          type="password"
+          name="secret"
+          value={apiDetails.secret}
+          placeholder="Client Secret"
+          onChange={updateApiDetail}
+        />
+
       </header>
-    </div>
+
+      <section>
+        <h2>Inhoud</h2>
+      </section>
+
+    </ClientContext.Provider>
   );
 }
 
