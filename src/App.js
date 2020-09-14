@@ -3,6 +3,7 @@ import { useLocalStorage } from 'react-use';
 
 import { ClientContext } from './Context';
 import { Client } from './Client';
+import { CatalogusList } from './CatalogusList';
 
 
 const App = () => {
@@ -55,6 +56,8 @@ const App = () => {
 
       <section>
         <h2>Inhoud</h2>
+
+        <CatalogusList />
       </section>
 
     </ClientContext.Provider>
