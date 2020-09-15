@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+
+import { ZaaktypeList } from './ZaaktypeList';
 
 
 const Catalogus = ({
@@ -29,7 +30,9 @@ const Catalogus = ({
                     <Tab>Besluittypen ({ besluittypen.length })</Tab>
                 </TabList>
 
-                <TabPanel> zt </TabPanel>
+                <TabPanel>
+                    <ZaaktypeList catalogusUrl={url} />
+                </TabPanel>
                 <TabPanel> iot </TabPanel>
                 <TabPanel> bt </TabPanel>
 
