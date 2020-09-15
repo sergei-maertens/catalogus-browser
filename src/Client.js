@@ -12,6 +12,11 @@ class Client {
         this.secret = secret;
     }
 
+    get configState() {
+        const input = `${this.baseUrl}${this.clientId}${this.secret}`;
+        return btoa(input);
+    }
+
     get token() {
         const payload = {client_id: this.clientId};
 
@@ -45,6 +50,19 @@ class Client {
         const fullUrl = `${this.baseUrl}${path}`;
         const data = await this.request('get', fullUrl);
         return data;
+    }
+
+    async getPaginated(path: '') {
+        let results = [];
+        let paginatedResponse = await this.get(path);
+
+        while (paginatedResponse.next) {
+            results = results.concat(paginatedResponse.results);
+            paginatedResponse = await this.request('get', paginatedResponse.next);
+        }
+
+        results = results.concat(paginatedResponse.results);
+        return results;
     }
 }
 

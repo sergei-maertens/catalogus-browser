@@ -7,7 +7,7 @@ import { CatalogusList } from './CatalogusList';
 
 
 const App = () => {
-  const [apiDetails, setApiDetails, removeApiDetails] = useLocalStorage(
+  const [apiDetails, setApiDetails] = useLocalStorage(
     'api-config', {baseUrl: '', clientId: '', secret: ''}
   );
 
