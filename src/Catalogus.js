@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+
 
 const Catalogus = ({
     url,
@@ -15,11 +17,24 @@ const Catalogus = ({
 }) => {
     return (
         <article className="catalogus">
-            <h2>{domein} - {rsin}</h2>
             <div>URL: <code>{url}</code></div>
             <address>
                 Contact: {contactpersoonBeheerNaam} (tel: {contactpersoonBeheerTelefoonnummer} - {contactpersoonBeheerEmailadres})
             </address>
+
+            <Tabs>
+                <TabList>
+                    <Tab>Zaaktypen ({ zaaktypen.length })</Tab>
+                    <Tab>Informatieobjecttypen ({ informatieobjecttypen.length })</Tab>
+                    <Tab>Besluittypen ({ besluittypen.length })</Tab>
+                </TabList>
+
+                <TabPanel> zt </TabPanel>
+                <TabPanel> iot </TabPanel>
+                <TabPanel> bt </TabPanel>
+
+            </Tabs>
+
         </article>
     );
 };

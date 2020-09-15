@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
-import { useAsync } from 'react-use';
 // import PropTypes from 'prop-types';
+import { useAsync } from 'react-use';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 import { ClientContext } from './Context';
 import { Catalogus } from './Catalogus';
@@ -19,9 +21,12 @@ const CatalogusList = () => {
     }
 
     return (
-        <React.Fragment>
-            { state.value.map(cat => <Catalogus key={cat.url} {...cat} />) }
-        </React.Fragment>
+        <Tabs>
+            <TabList>
+                { state.value.map(cat => <Tab key={cat.url}>{cat.domein} - {cat.rsin}</Tab>) }
+            </TabList>
+            { state.value.map(cat => <TabPanel key={cat.url}><Catalogus {...cat} /></TabPanel>) }
+        </Tabs>
     );
 };
 
