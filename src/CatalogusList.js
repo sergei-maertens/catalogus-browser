@@ -25,7 +25,11 @@ const CatalogusList = () => {
             <TabList>
                 { state.value.map(cat => <Tab key={cat.url}>{cat.domein} - {cat.rsin}</Tab>) }
             </TabList>
-            { state.value.map(cat => <TabPanel key={cat.url}><Catalogus {...cat} /></TabPanel>) }
+            { state.value.map(cat => (
+                <TabPanel key={cat.url}>
+                    <Catalogus {...cat} />
+                </TabPanel>
+            ) ) }
         </Tabs>
     );
 };

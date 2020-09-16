@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useAsync } from 'react-use';
 
 import { ClientContext } from './Context';
+import { groupBy } from './Utils';
 
 
 const ZaaktypeList = ({ catalogusUrl }) => {
@@ -12,7 +13,8 @@ const ZaaktypeList = ({ catalogusUrl }) => {
         const zaaktypen = await client.getPaginated(
             `zaaktypen?catalogus=${catalogusUrl}&status=alles`
         );
-        return zaaktypen;
+        const grouped = groupBy(zaaktypen, zt => zt.omschrijving);
+        return grouped;
     }, [client.configState]);
 
     if (state.loading) {
@@ -21,8 +23,10 @@ const ZaaktypeList = ({ catalogusUrl }) => {
 
     return (
         <ul>
-            { state.value.map(zt => (
-                <li key={zt.url}>{zt.omschrijving} - {zt.identificatie}</li>
+            { [...state.value.entries()].map(([omschrijving, versions]) => (
+                <li key={versions[0].identificatie}>
+                    {`${omschrijving} - ${versions[0].identificatie} (${versions.length} versie(s))`}
+                </li>
             )) }
         </ul>
     );

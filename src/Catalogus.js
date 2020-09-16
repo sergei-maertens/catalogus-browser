@@ -16,6 +16,11 @@ const Catalogus = ({
     informatieobjecttypen,
     besluittypen,
 }) => {
+
+    const zaaktypeOmschrijvingen = new Set(zaaktypen.map(zt => zt.omschrijving));
+
+    console.log(zaaktypeOmschrijvingen);
+
     return (
         <article className="catalogus">
             <div>URL: <code>{url}</code></div>
@@ -25,7 +30,7 @@ const Catalogus = ({
 
             <Tabs>
                 <TabList>
-                    <Tab>Zaaktypen ({ zaaktypen.length })</Tab>
+                    <Tab>Zaaktypen</Tab>
                     <Tab>Informatieobjecttypen ({ informatieobjecttypen.length })</Tab>
                     <Tab>Besluittypen ({ besluittypen.length })</Tab>
                 </TabList>
