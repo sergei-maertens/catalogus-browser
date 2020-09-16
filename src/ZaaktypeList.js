@@ -4,6 +4,7 @@ import { useAsync } from 'react-use';
 
 import { ClientContext } from './Context';
 import { groupBy } from './Utils';
+import { Zaaktype } from './Zaaktype';
 
 
 const ZaaktypeList = ({ catalogusUrl }) => {
@@ -22,13 +23,11 @@ const ZaaktypeList = ({ catalogusUrl }) => {
     }
 
     return (
-        <ul>
+        <>
             { [...state.value.entries()].map(([omschrijving, versions]) => (
-                <li key={versions[0].identificatie}>
-                    {`${omschrijving} - ${versions[0].identificatie} (${versions.length} versie(s))`}
-                </li>
+                <Zaaktype key={omschrijving} versions={versions} />
             )) }
-        </ul>
+        </>
     );
 };
 
