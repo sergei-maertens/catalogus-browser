@@ -7,6 +7,7 @@ import { ZaaktypeList } from './ZaaktypeList';
 
 
 const Catalogus = ({
+    setRenderSidePanel,
     url,
     domein,
     rsin,
@@ -32,7 +33,7 @@ const Catalogus = ({
                 </TabList>
 
                 <TabPanel>
-                    <ZaaktypeList catalogusUrl={url} />
+                    <ZaaktypeList catalogusUrl={url} setRenderSidePanel={setRenderSidePanel} />
                 </TabPanel>
                 <TabPanel> iot </TabPanel>
                 <TabPanel> bt </TabPanel>
@@ -44,6 +45,7 @@ const Catalogus = ({
 };
 
 Catalogus.propTypes = {
+    setRenderSidePanel: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired,
     domein: PropTypes.string.isRequired,
     rsin: PropTypes.string.isRequired,

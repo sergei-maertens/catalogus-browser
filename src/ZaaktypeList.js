@@ -7,7 +7,7 @@ import { groupBy } from './Utils';
 import { Zaaktype } from './Zaaktype';
 
 
-const ZaaktypeList = ({ catalogusUrl }) => {
+const ZaaktypeList = ({ catalogusUrl, setRenderSidePanel }) => {
     const client = useContext(ClientContext);
 
     const state = useAsync(async () => {
@@ -25,7 +25,7 @@ const ZaaktypeList = ({ catalogusUrl }) => {
     return (
         <>
             { [...state.value.entries()].map(([omschrijving, versions]) => (
-                <Zaaktype key={omschrijving} versions={versions} />
+                <Zaaktype key={omschrijving} versions={versions} setRenderSidePanel={setRenderSidePanel} />
             )) }
         </>
     );
@@ -33,6 +33,7 @@ const ZaaktypeList = ({ catalogusUrl }) => {
 
 ZaaktypeList.propTypes = {
     catalogusUrl: PropTypes.string.isRequired,
+    setRenderSidePanel: PropTypes.func.isRequired,
 };
 
 

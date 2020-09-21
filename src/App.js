@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocalStorage } from 'react-use';
 
 import { ClientContext } from './Context';
 import { Client } from './Client';
 import { CatalogusList } from './CatalogusList';
+import { SidePanel } from './SidePanel';
 
 
 const App = () => {
@@ -20,6 +21,12 @@ const App = () => {
   };
 
   const client = new Client(apiDetails.baseUrl, apiDetails.clientId, apiDetails.secret);
+
+  const [renderSidePanel, setRenderSidePanel] = useState(
+    () => {
+      return () => 'Default sidepanel.';
+    }
+  );
 
   return (
     <ClientContext.Provider value={client}>
@@ -57,7 +64,12 @@ const App = () => {
       <section>
         <h2>Inhoud</h2>
 
-        <CatalogusList />
+
+        <div style={{display: 'flex', justifyContent: 'flex-start'}}>
+            <CatalogusList setRenderSidePanel={setRenderSidePanel} />
+            <SidePanel render={ renderSidePanel } />
+        </div>
+
       </section>
 
     </ClientContext.Provider>

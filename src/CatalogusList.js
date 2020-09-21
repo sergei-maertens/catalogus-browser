@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { useAsync } from 'react-use';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
@@ -8,7 +8,7 @@ import { ClientContext } from './Context';
 import { Catalogus } from './Catalogus';
 
 
-const CatalogusList = () => {
+const CatalogusList = ({ setRenderSidePanel }) => {
     const client = useContext(ClientContext);
 
     const state = useAsync(async () => {
@@ -27,7 +27,7 @@ const CatalogusList = () => {
             </TabList>
             { state.value.map(cat => (
                 <TabPanel key={cat.url}>
-                    <Catalogus {...cat} />
+                    <Catalogus setRenderSidePanel={setRenderSidePanel} {...cat} />
                 </TabPanel>
             ) ) }
         </Tabs>
@@ -35,6 +35,7 @@ const CatalogusList = () => {
 };
 
 CatalogusList.propTypes = {
+    setRenderSidePanel: PropTypes.func.isRequired,
 };
 
 
