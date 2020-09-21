@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
+import { CopyUrl } from './CopyUrl';
 import { ZaaktypeList } from './ZaaktypeList';
 
 
@@ -16,14 +17,9 @@ const Catalogus = ({
     informatieobjecttypen,
     besluittypen,
 }) => {
-
-    const zaaktypeOmschrijvingen = new Set(zaaktypen.map(zt => zt.omschrijving));
-
-    console.log(zaaktypeOmschrijvingen);
-
     return (
         <article className="catalogus">
-            <div>URL: <code>{url}</code></div>
+            <div>URL: <CopyUrl url={url} /></div>
             <address>
                 Contact: {contactpersoonBeheerNaam} (tel: {contactpersoonBeheerTelefoonnummer} - {contactpersoonBeheerEmailadres})
             </address>
