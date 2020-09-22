@@ -12,7 +12,10 @@ const SidePanel = ({ render }) => {
 };
 
 SidePanel.propTypes = {
-    render: PropTypes.func.isRequired,
+    render: PropTypes.oneOfType([
+        PropTypes.object,
+        PropTypes.func,
+    ]).isRequired,
 };
 
 

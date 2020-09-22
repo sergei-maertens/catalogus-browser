@@ -6,6 +6,7 @@ import 'react-tabs/style/react-tabs.css';
 
 import { ClientContext } from './Context';
 import { Catalogus } from './Catalogus';
+import { FetchState } from './FetchState';
 
 
 const CatalogusList = ({ setRenderSidePanel }) => {
@@ -16,25 +17,19 @@ const CatalogusList = ({ setRenderSidePanel }) => {
         return catalogi;
     }, [client.configState]);
 
-    if (state.loading) {
-        return (<div>Loading...</div>);
-    }
-
-    if (state.error) {
-        return (<div>{state.error.toString()}</div>);
-    }
-
     return (
-        <Tabs>
-            <TabList>
-                { state.value.map(cat => <Tab key={cat.url}>{cat.domein} - {cat.rsin}</Tab>) }
-            </TabList>
-            { state.value.map(cat => (
-                <TabPanel key={cat.url}>
-                    <Catalogus setRenderSidePanel={setRenderSidePanel} {...cat} />
-                </TabPanel>
-            ) ) }
-        </Tabs>
+        <FetchState {...state} render={ (value) => (
+            <Tabs>
+                <TabList>
+                    { value.map(cat => <Tab key={cat.url}>{cat.domein} - {cat.rsin}</Tab>) }
+                </TabList>
+                { value.map(cat => (
+                    <TabPanel key={cat.url}>
+                        <Catalogus setRenderSidePanel={setRenderSidePanel} {...cat} />
+                    </TabPanel>
+                ) ) }
+            </Tabs>
+        ) } />
     );
 };
 

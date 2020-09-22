@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { useAsync } from 'react-use';
 
+import { ClientContext } from './Context';
 import { CopyUrl } from './CopyUrl';
+import { FetchState } from './FetchState';
+import { StatusType } from './StatusType';
+import { ResultaatType } from './ResultaatType';
 
 
 const ZaaktypeVersion = ({
@@ -11,38 +16,62 @@ const ZaaktypeVersion = ({
     eindeGeldigheid,
     omschrijving,
     concept,
-    statustypen,
-    resultaattypen,
 }) => {
+
+    const client = useContext(ClientContext);
+
+    // fetch related objects inside zaaktype
+
+    const state = useAsync(async () => {
+        const query = {zaaktype: url};
+        const fetchStatustypen = client.getPaginated('statustypen', query);
+        const fetchResultaattypen = client.getPaginated('resultaattypen', query);
+
+        const [statustypen, resultaattypen] = await Promise.all([
+            fetchStatustypen,
+            fetchResultaattypen,
+        ]);
+        return {
+            statustypen,
+            resultaattypen,
+        };
+    }, [url]);
+
     return (
-        <article>
-            <header>
-                <h3>{omschrijving} - {versiedatum}</h3>
-                <div>URL: <CopyUrl url={url} /></div>
-                <div>Geldig van: <time>{beginGeldigheid}</time></div>
-                <div>Geldig tot: <time>{eindeGeldigheid ?? '-'}</time></div>
-            </header>
+        <FetchState {...state} render={ ({ statustypen, resultaattypen }) => (
+            <article>
+                <header>
+                    <h3>{omschrijving} - {versiedatum}</h3>
+                    <div>URL: <CopyUrl url={url} /></div>
+                    <div>Geldig van: <time>{beginGeldigheid}</time></div>
+                    <div>Geldig tot: <time>{eindeGeldigheid ?? '-'}</time></div>
+                </header>
 
-            <div>Concept? { concept ? 'Ja': 'Nee' }</div>
+                <div>Concept? { concept ? 'Ja': 'Nee' }</div>
 
-            <section>
-                <strong>Statustypen</strong>
-                <ul>
-                    { statustypen.map( statustypeUrl => (
-                        <li key={statustypeUrl}>{statustypeUrl}</li>
-                    ) ) }
-                </ul>
-            </section>
+                <section>
+                    <strong>Statustypen</strong>
+                    <ul>
+                        { statustypen.map( statustype => (
+                            <li key={statustype.url}>
+                                <StatusType {...statustype} />
+                            </li>
+                        ) ) }
+                    </ul>
+                </section>
 
-            <section>
-                <strong>Resultaattypen</strong>
-                <ul>
-                    { resultaattypen.map( resultaattypeUrl => (
-                        <li key={resultaattypeUrl}>{resultaattypeUrl}</li>
-                    ) ) }
-                </ul>
-            </section>
-        </article>
+                <section>
+                    <strong>Resultaattypen</strong>
+                    <ul>
+                        { resultaattypen.map( resultaattype => (
+                            <li key={resultaattype.url}>
+                                <ResultaatType {...resultaattype} />
+                            </li>
+                        ) ) }
+                    </ul>
+                </section>
+            </article>
+        ) } />
     );
 };
 
@@ -59,8 +88,6 @@ ZaaktypeVersion.propTypes = {
     onderwerp: PropTypes.string.isRequired,
     selectielijstProcestype: PropTypes.string.isRequired,
     vertrouwelijkheidaanduiding: PropTypes.string.isRequired,
-    statustypen: PropTypes.arrayOf(PropTypes.string).isRequired,
-    resultaattypen: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 

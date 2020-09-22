@@ -46,15 +46,17 @@ class Client {
         return (await response.json());
     }
 
-    async get(path: '') {
-        const fullUrl = `${this.baseUrl}${path}`;
+    async get(path: '', query={}) {
+        const params = new URLSearchParams(query).toString();
+        const qs = params ? `?${params}` : '';
+        const fullUrl = `${this.baseUrl}${path}${qs}`;
         const data = await this.request('get', fullUrl);
         return data;
     }
 
-    async getPaginated(path: '') {
+    async getPaginated(path: '', query={}) {
         let results = [];
-        let paginatedResponse = await this.get(path);
+        let paginatedResponse = await this.get(path, query);
 
         while (paginatedResponse.next) {
             results = results.concat(paginatedResponse.results);
