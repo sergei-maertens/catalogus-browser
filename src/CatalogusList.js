@@ -20,6 +20,10 @@ const CatalogusList = ({ setRenderSidePanel }) => {
         return (<div>Loading...</div>);
     }
 
+    if (state.error) {
+        return (<div>{state.error.toString()}</div>);
+    }
+
     return (
         <Tabs>
             <TabList>
