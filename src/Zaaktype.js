@@ -7,6 +7,29 @@ import { CopyUrl } from './CopyUrl';
 import { FetchState } from './FetchState';
 import { StatusType } from './StatusType';
 import { ResultaatType } from './ResultaatType';
+import { RolType } from './RolType';
+
+
+const RelatedObjects = ({ title, objects, component }) => {
+    return (
+        <section>
+            <strong>{title}</strong>
+            <ul>
+                { objects.map( obj => (
+                    <li key={obj.url}>
+                        { React.createElement(component, obj) }
+                    </li>
+                ) ) }
+            </ul>
+        </section>
+    );
+};
+
+RelatedObjects.propTypes = {
+    title: PropTypes.string.isRequired,
+    objects: PropTypes.array.isRequired,
+    component: PropTypes.func.isRequired,
+};
 
 
 const ZaaktypeVersion = ({
@@ -23,22 +46,26 @@ const ZaaktypeVersion = ({
     // fetch related objects inside zaaktype
 
     const state = useAsync(async () => {
-        const query = {zaaktype: url};
+        const query = {zaaktype: url, status: 'alles'};
         const fetchStatustypen = client.getPaginated('statustypen', query);
         const fetchResultaattypen = client.getPaginated('resultaattypen', query);
+        const fetchRoltypen = client.getPaginated('roltypen', query);
 
-        const [statustypen, resultaattypen] = await Promise.all([
+        const [statustypen, resultaattypen, roltypen] = await Promise.all([
             fetchStatustypen,
             fetchResultaattypen,
+            fetchRoltypen,
         ]);
+        statustypen.sort( (st1, st2) => st1.volgnummer - st2.volgnummer );
         return {
             statustypen,
             resultaattypen,
+            roltypen,
         };
     }, [url]);
 
     return (
-        <FetchState {...state} render={ ({ statustypen, resultaattypen }) => (
+        <FetchState {...state} render={ ({ statustypen, resultaattypen, roltypen }) => (
             <article>
                 <header>
                     <h3>{omschrijving} - {versiedatum}</h3>
@@ -49,27 +76,9 @@ const ZaaktypeVersion = ({
 
                 <div>Concept? { concept ? 'Ja': 'Nee' }</div>
 
-                <section>
-                    <strong>Statustypen</strong>
-                    <ul>
-                        { statustypen.map( statustype => (
-                            <li key={statustype.url}>
-                                <StatusType {...statustype} />
-                            </li>
-                        ) ) }
-                    </ul>
-                </section>
-
-                <section>
-                    <strong>Resultaattypen</strong>
-                    <ul>
-                        { resultaattypen.map( resultaattype => (
-                            <li key={resultaattype.url}>
-                                <ResultaatType {...resultaattype} />
-                            </li>
-                        ) ) }
-                    </ul>
-                </section>
+                <RelatedObjects title="Statustypen" objects={statustypen} component={StatusType} />
+                <RelatedObjects title="Resultaattypen" objects={resultaattypen} component={ResultaatType} />
+                <RelatedObjects title="Roltypen" objects={roltypen} component={RolType} />
             </article>
         ) } />
     );
