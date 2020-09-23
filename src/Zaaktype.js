@@ -8,6 +8,7 @@ import { FetchState } from './FetchState';
 import { StatusType } from './StatusType';
 import { ResultaatType } from './ResultaatType';
 import { RolType } from './RolType';
+import { Eigenschap } from './Eigenschap';
 
 
 const RelatedObjects = ({ title, objects, component }) => {
@@ -50,22 +51,25 @@ const ZaaktypeVersion = ({
         const fetchStatustypen = client.getPaginated('statustypen', query);
         const fetchResultaattypen = client.getPaginated('resultaattypen', query);
         const fetchRoltypen = client.getPaginated('roltypen', query);
+        const fetchEigenschappen = client.getPaginated('eigenschappen', query);
 
-        const [statustypen, resultaattypen, roltypen] = await Promise.all([
+        const [statustypen, resultaattypen, roltypen, eigenschappen] = await Promise.all([
             fetchStatustypen,
             fetchResultaattypen,
             fetchRoltypen,
+            fetchEigenschappen,
         ]);
         statustypen.sort( (st1, st2) => st1.volgnummer - st2.volgnummer );
         return {
             statustypen,
             resultaattypen,
             roltypen,
+            eigenschappen,
         };
     }, [url]);
 
     return (
-        <FetchState {...state} render={ ({ statustypen, resultaattypen, roltypen }) => (
+        <FetchState {...state} render={ ({ statustypen, resultaattypen, roltypen, eigenschappen }) => (
             <article>
                 <header>
                     <h3>{omschrijving} - {versiedatum}</h3>
@@ -79,6 +83,7 @@ const ZaaktypeVersion = ({
                 <RelatedObjects title="Statustypen" objects={statustypen} component={StatusType} />
                 <RelatedObjects title="Resultaattypen" objects={resultaattypen} component={ResultaatType} />
                 <RelatedObjects title="Roltypen" objects={roltypen} component={RolType} />
+                <RelatedObjects title="Eigenschappen" objects={eigenschappen} component={Eigenschap} />
             </article>
         ) } />
     );
