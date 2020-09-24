@@ -1,40 +1,44 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
 import { useAsync } from 'react-use';
 
-import { ClientContext } from './Context';
+import { ClientContext, CatalogusContext } from './Context';
 import { groupBy } from './Utils';
-import { Zaaktype } from './Zaaktype';
+import { FetchState } from './FetchState';
 
 
-const ZaaktypeList = ({ catalogusUrl, setRenderSidePanel }) => {
-    const client = useContext(ClientContext);
+const ZaaktypeList = () => {
+  const client = useContext(ClientContext);
+  const catalogus = useContext(CatalogusContext);
 
-    const state = useAsync(async () => {
-        const zaaktypen = await client.getPaginated(
-            `zaaktypen?catalogus=${catalogusUrl}&status=alles`
-        );
-        const grouped = groupBy(zaaktypen, zt => zt.omschrijving);
-        return grouped;
-    }, [client.configState]);
-
-    if (state.loading) {
-        return (<div>Loading...</div>);
+  const state = useAsync(async () => {
+    if (!catalogus) {
+      return new Map();
     }
 
-    return (
-        <>
-            { [...state.value.entries()].map(([omschrijving, versions]) => (
-                <Zaaktype key={omschrijving} versions={versions} setRenderSidePanel={setRenderSidePanel} />
-            )) }
-        </>
+    const zaaktypen = await client.getPaginated(
+        `zaaktypen?catalogus=${catalogus.url}&status=alles`
     );
+    const grouped = groupBy(zaaktypen, zt => zt.omschrijving);
+    return grouped;
+  }, [client.configState, catalogus]);
+
+  return (
+    <FetchState {...state} render={ (groups) => (
+      <nav>
+        <ul>
+          {
+            [...groups.entries()].map( ([omschrijving, versions]) => (
+              <li key={omschrijving}>{omschrijving}</li>
+            ) )
+          }
+        </ul>
+      </nav>
+    )} />
+  );
 };
 
 ZaaktypeList.propTypes = {
-    catalogusUrl: PropTypes.string.isRequired,
-    setRenderSidePanel: PropTypes.func.isRequired,
 };
 
 
-export { ZaaktypeList };
+export default ZaaktypeList;

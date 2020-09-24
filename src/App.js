@@ -6,6 +6,7 @@ import { Client } from './Client';
 import Auth from './Auth';
 import CatalogusPicker from './CatalogusPicker';
 import CatalogusDetails from './CatalogusDetails';
+import ZaaktypeList from './ZaaktypeList';
 
 import './styles/App.scss';
 
@@ -40,9 +41,11 @@ const App = () => {
         </div>
       </header>
 
+      { activeCatalogus ? <CatalogusDetails catalogus={activeCatalogus} /> : null }
+
       <CatalogusContext.Provider value={activeCatalogus}>
         <section className="app__content">
-          { activeCatalogus ? <CatalogusDetails catalogus={activeCatalogus} /> : null }
+          <ZaaktypeList />
         </section>
       </CatalogusContext.Provider>
 
