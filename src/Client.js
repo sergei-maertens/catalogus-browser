@@ -1,5 +1,11 @@
 import jwt from 'jsonwebtoken';
 
+
+const CACHE = {
+  get: {},
+};
+
+
 class Client {
   constructor(baseUrl, clientId, secret) {
     if (!baseUrl.endsWith('/')) {
@@ -29,6 +35,14 @@ class Client {
   };
 
   async request(method='get', url, body=null) {
+    // check the cache
+    if (method === 'get') {
+      const cached = CACHE.get[url];
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+    }
+
     const _body = body ? JSON.stringify(body) : null;
     const response = await fetch(
       url,
@@ -46,7 +60,14 @@ class Client {
       throw new Error(response.text);
     }
 
-    return (await response.json());
+    const responseData = await response.json();
+
+    // store cached result
+    if (method === 'get') {
+      CACHE.get[url] = responseData;
+    }
+
+    return responseData;
   }
 
   async get(path: '', query={}) {
