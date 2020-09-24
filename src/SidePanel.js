@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 
 const SidePanel = ({ render }) => {
-    const rendered = render.call ? render.call() : render;
+    const rendered = render ? (render.call ? render.call() : render)
+                            : null;
     return (
         <div style={{ width: '60%', marginLeft: '20px'}}>
             { rendered }
@@ -13,9 +14,9 @@ const SidePanel = ({ render }) => {
 
 SidePanel.propTypes = {
     render: PropTypes.oneOfType([
-        PropTypes.object,
+        PropTypes.element,
         PropTypes.func,
-    ]).isRequired,
+    ]),
 };
 
 

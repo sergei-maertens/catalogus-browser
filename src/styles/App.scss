@@ -1,0 +1,26 @@
+.app {
+  &__header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-bottom: solid 2px blue;
+    padding: 1em;
+  }
+
+  &__content {
+    display: flex;
+    padding: 1em;
+  }
+
+  &__catalogus-picker {
+    width: 20vw;
+    min-width: 200px;
+  }
+
+  &__auth {
+    input {
+      margin-right: 2em;
+      padding: .5em;
+    }
+  }
+}
