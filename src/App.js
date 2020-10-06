@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocalStorage } from 'react-use';
 
 import { ClientContext, CatalogusContext } from './Context';
@@ -26,7 +26,7 @@ const App = () => {
 
   const client = new Client(apiDetails.baseUrl, apiDetails.clientId, apiDetails.secret);
 
-  const [activeCatalogus, setActiveCatalogus] = useState(null);
+  const [activeCatalogus, setActiveCatalogus] = useLocalStorage('active-catalogue', null);
 
   return (
     <ClientContext.Provider value={client}>

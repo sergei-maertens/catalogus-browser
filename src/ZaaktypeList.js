@@ -5,6 +5,8 @@ import { ClientContext, CatalogusContext } from './Context';
 import { groupBy } from './Utils';
 import { FetchState } from './FetchState';
 
+import './styles/ZaaktypeList.scss';
+
 
 const ZaaktypeList = () => {
   const client = useContext(ClientContext);
@@ -24,7 +26,7 @@ const ZaaktypeList = () => {
 
   return (
     <FetchState {...state} render={ (groups) => (
-      <nav>
+      <nav className="zaaktype-list">
         <ul>
           {
             [...groups.entries()].map( ([omschrijving, versions]) => (

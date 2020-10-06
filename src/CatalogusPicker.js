@@ -48,7 +48,7 @@ const CatalogusPicker = ({ onChange, active=null }) => {
 
   const state = useAsync(async () => {
     const catalogi = await client.getPaginated('catalogussen');
-    if (catalogi.length) {
+    if (catalogi.length && !active) {
       onChange(catalogi[0]);
     }
     return catalogi;
