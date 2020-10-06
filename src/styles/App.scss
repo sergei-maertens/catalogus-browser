@@ -1,8 +1,14 @@
+html, body {
+  * {
+    box-sizing: border-box;
+  }
+}
+
 .app {
   &__header {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 100vw;
     border-bottom: solid 2px blue;
     padding: 1em;
   }

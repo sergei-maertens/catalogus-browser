@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useAsync } from 'react-use';
 
 import { ClientContext, CatalogusContext } from './Context';
@@ -6,6 +7,42 @@ import { groupBy } from './Utils';
 import { FetchState } from './FetchState';
 
 import './styles/ZaaktypeList.scss';
+
+
+const Zaaktype = ({omschrijving, versions, onClick}) => {
+  const [versionsVisible, setVersionsVisible] = useState(false);
+  const toggleVersions = () => setVersionsVisible(!versionsVisible);
+  return (
+    <>
+      <span
+        className="zaaktype-list__omschrijving"
+        title={omschrijving}
+        onClick={toggleVersions}>
+        > {omschrijving}
+      </span>
+      {
+        versionsVisible
+          ? (
+            <ul className="zaaktypen-list__versions">
+              {versions.map(version => (
+                <li className="zaaktypen-list__version" key={version.url} onClick={() => onClick(version)}>
+                  {version.versiedatum}
+                </li>
+              ))}
+            </ul>
+          )
+          : null
+      }
+    </>
+  );
+};
+
+Zaaktype.propTypes = {
+  omschrijving: PropTypes.string.isRequired,
+  versions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
 
 
 const ZaaktypeList = () => {
@@ -27,10 +64,12 @@ const ZaaktypeList = () => {
   return (
     <FetchState {...state} render={ (groups) => (
       <nav className="zaaktype-list">
-        <ul>
+        <ul className="zaaktype-list__zaaktypen">
           {
             [...groups.entries()].map( ([omschrijving, versions]) => (
-              <li key={omschrijving}>{omschrijving}</li>
+              <li key={omschrijving} className="zaaktype-list__zaaktype">
+                <Zaaktype omschrijving={omschrijving} versions={versions} onClick={console.log} />
+              </li>
             ) )
           }
         </ul>
