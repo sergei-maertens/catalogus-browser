@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useLocalStorage } from 'react-use';
 
-import { ClientContext, CatalogusContext } from './Context';
+import { ClientContext, CatalogusContext, ZaaktypeContext } from './Context';
 import { Client } from './Client';
 import Auth from './Auth';
 import CatalogusPicker from './CatalogusPicker';
@@ -25,8 +25,8 @@ const App = () => {
   };
 
   const client = new Client(apiDetails.baseUrl, apiDetails.clientId, apiDetails.secret);
-
   const [activeCatalogus, setActiveCatalogus] = useLocalStorage('active-catalogue', null);
+  const [activeZaaktype, setActiveZaaktype] = useState(null);
 
   return (
     <ClientContext.Provider value={client}>
@@ -44,9 +44,16 @@ const App = () => {
       { activeCatalogus ? <CatalogusDetails catalogus={activeCatalogus} /> : null }
 
       <CatalogusContext.Provider value={activeCatalogus}>
-        <section className="app__content">
-          <ZaaktypeList />
-        </section>
+        <ZaaktypeContext.Provider value={activeZaaktype}>
+          <section className="app__content">
+            <ZaaktypeList onZaaktypeSelect={setActiveZaaktype} />
+
+            <div style={{maxWidth: '75vw'}}>
+              <code>{JSON.stringify(activeZaaktype)}</code>
+            </div>
+
+          </section>
+        </ZaaktypeContext.Provider>
       </CatalogusContext.Provider>
 
     </ClientContext.Provider>
