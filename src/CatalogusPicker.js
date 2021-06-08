@@ -44,7 +44,7 @@ CatalogusSelect.propTypes = {
 };
 
 
-const CatalogusPicker = ({ onChange, active=null }) => {
+const CatalogusPicker = ({ onChange, onCatalogiLoaded, active=null }) => {
   const client = useContext(ClientContext);
 
   const state = useAsync(async () => {
@@ -52,6 +52,7 @@ const CatalogusPicker = ({ onChange, active=null }) => {
     if (catalogi.length && !active) {
       onChange(catalogi[0]);
     }
+    onCatalogiLoaded(catalogi);
     return catalogi;
   }, [client.configState]);
 
@@ -65,6 +66,7 @@ const CatalogusPicker = ({ onChange, active=null }) => {
 CatalogusPicker.propTypes = {
   onChange: PropTypes.func.isRequired,
   active: CatalogusType,
+  onCatalogiLoaded: PropTypes.func.isRequired,
 };
 
 

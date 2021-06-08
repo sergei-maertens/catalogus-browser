@@ -5,7 +5,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
   useHistory,
 } from 'react-router-dom';
 import { useImmerReducer } from 'use-immer';
@@ -15,19 +14,24 @@ import { Client } from './Client';
 import Auth from './Auth';
 import CatalogusPicker from './CatalogusPicker';
 import CatalogusDetails from './CatalogusDetails';
+import { UUIDFromUrl } from './Utils';
 
 import './styles/App.scss';
 
-const initialState = {
-  activeCatalogus: null,
+const initialAppState = {
+  catalogi: {}, // key-value map, keys are catalogi UUIDs, values are the objects
 };
 
-
-const reducer = (draft, action) => {
+const appReducer = (draft, action) => {
   switch (action.type) {
-    case 'SET_ACTIVE_CATALOGUS': {
-      const catalogus = action.payload;
-      draft.activeCatalogus = catalogus;
+    case 'CATALOGI_LOADED': {
+      const catalogi = action.payload;
+      draft.catalogi = Object.fromEntries(
+        catalogi.map( catalogus => ([
+          UUIDFromUrl(catalogus.url),
+          catalogus
+        ]) )
+      );
       break;
     }
     default: {
@@ -36,8 +40,10 @@ const reducer = (draft, action) => {
   }
 };
 
-
 const App = () => {
+  /**
+   * API client
+   */
   const [apiDetails, setApiDetails] = useLocalStorage(
     'api-config', {baseUrl: '', clientId: '', secret: ''}
   );
@@ -52,15 +58,24 @@ const App = () => {
 
   const client = new Client(apiDetails.baseUrl, apiDetails.clientId, apiDetails.secret);
 
+  /**
+   * Application state
+   */
+  const [state, dispatch] = useImmerReducer(appReducer, initialAppState);
+
   return (
     <ClientContext.Provider value={client}>
 
       <Router>
-        <AppHeader apiDetails={apiDetails} updateApiDetail={updateApiDetail} />
+        <AppHeader
+          apiDetails={apiDetails}
+          updateApiDetail={updateApiDetail}
+          onCatalogiLoaded={ (catalogi) => dispatch({type: 'CATALOGI_LOADED', payload: catalogi}) }
+        />
 
         <Switch>
           <Route path="/catalogi/:uuid">
-            <CatalogusDetails />
+            { Object.keys(state.catalogi).length && <CatalogusDetails catalogi={state.catalogi} /> }
           </Route>
           <Route path="/">
             <div style={{padding: '1em'}}>
@@ -75,18 +90,36 @@ const App = () => {
 }
 
 
-const AppHeader = ({ apiDetails, updateApiDetail }) => {
+const initialHeaderState = {
+  activeCatalogus: null,
+};
+
+
+const headerReducer = (draft, action) => {
+  switch (action.type) {
+    case 'SET_ACTIVE_CATALOGUS': {
+      const catalogus = action.payload;
+      draft.activeCatalogus = catalogus;
+      break;
+    }
+    default: {
+      throw new Error(`Unknown action ${action.type}`);
+    }
+  }
+};
+
+
+const AppHeader = ({ apiDetails, updateApiDetail, onCatalogiLoaded }) => {
   const history = useHistory();
 
-  const [state, dispatch] = useImmerReducer(reducer, initialState);
+  const [state, dispatch] = useImmerReducer(headerReducer, initialHeaderState);
 
   const onCatalogusChange = (catalogus) => {
     dispatch({type: 'SET_ACTIVE_CATALOGUS', payload: catalogus});
 
     let redirectTo;
     if (catalogus) {
-      const uuid = catalogus.url.split('/').pop();
-      redirectTo = `/catalogi/${uuid}`;
+      redirectTo = `/catalogi/${UUIDFromUrl(catalogus.url)}`;
     } else {
       redirectTo = '/';
     }
@@ -96,7 +129,11 @@ const AppHeader = ({ apiDetails, updateApiDetail }) => {
   return (
     <header className="app__header">
       <div className="app__catalogus-picker">
-        <CatalogusPicker onChange={onCatalogusChange} active={state.activeCatalogus} />
+        <CatalogusPicker
+          onChange={onCatalogusChange}
+          active={state.activeCatalogus}
+          onCatalogiLoaded={onCatalogiLoaded}
+        />
       </div>
 
       <div className="app__auth">
@@ -109,6 +146,7 @@ const AppHeader = ({ apiDetails, updateApiDetail }) => {
 AppHeader.propTypes = {
   apiDetails: PropTypes.object,
   updateApiDetail: PropTypes.func.isRequired,
+  onCatalogiLoaded: PropTypes.func.isRequired,
 };
 
 

@@ -27,4 +27,14 @@ const groupBy = (list, keyGetter) => {
     return map;
 };
 
-export { groupBy };
+
+const UUIDFromUrl = (url) => {
+  const uuid = url.split('/').pop();
+  return uuid;
+};
+
+
+
+export { groupBy, UUIDFromUrl };
+
+
