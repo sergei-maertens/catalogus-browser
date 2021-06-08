@@ -25,6 +25,7 @@ const CatalogusSelect = ({ catalogi, onChange, active }) => {
       className="catalogus-picker"
       value={currentValue}
     >
+      <option value="">-------</option>
       {
         catalogi.map( catalogus => (
           <option value={catalogus.url} key={catalogus.url}>
