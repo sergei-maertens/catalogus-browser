@@ -6,6 +6,7 @@ import { CopyUrl } from './CopyUrl';
 import { CatalogusType } from './prop-types';
 import KeyValue from './KeyValue';
 import ResourceSwitcher from './ResourceSwitcher';
+import ResourceList from './ResourceList';
 
 
 const CatalogusDetails = ({catalogi}) => {
@@ -57,6 +58,11 @@ const CatalogusDetails = ({catalogi}) => {
           options={resourceOptions}
           onChange={ ({ target: {value} }) => {setSelectedResource(value)} }
         />
+
+        <section style={{display: 'flex', background: 'white', margin: '-.5em', padding: '1em'}}>
+          <ResourceList resource={selectedResource} catalogusUrl={catalogus.url} />
+          <div>data panel</div>
+        </section>
       </article>
     );
 };
