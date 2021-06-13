@@ -4,21 +4,13 @@ import { useAsync } from 'react-use';
 
 import { ClientContext } from './Context';
 import { FetchState } from './FetchState';
+import ZaaktypeList from './ZaaktypeList';
 
 
 const RESOURCE_MAP = {
   zt: 'zaaktypen',
   iot: 'informatieobjecttypen',
   bt: 'besluittypen',
-};
-
-
-
-const ZaaktypeList = ({ items }) => {
-  console.log(items);
-  return (
-    <>yolo</>
-  );
 };
 
 
@@ -49,7 +41,7 @@ const ResourceList = ({ resource, catalogusUrl }) => {
   const ListComponent = COMPONENT_MAP[resource];
 
   return (
-    <div className="list" style={{width: '30%', borderRight: 'solid 1px #eeeeee', marginRight: '1em'}}>
+    <div className="list" style={{width: '30%', marginRight: '1em'}}>
       <FetchState {...state} render={ (items) => (
         <ListComponent items={items} />
       ) } />
