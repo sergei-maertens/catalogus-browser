@@ -74,7 +74,7 @@ const App = () => {
         />
 
         <Switch>
-          <Route path="/catalogi/:uuid">
+          <Route path="/catalogi/:catalogusUuid">
             { Object.keys(state.catalogi).length && <CatalogusDetails catalogi={state.catalogi} /> }
           </Route>
           <Route path="/">

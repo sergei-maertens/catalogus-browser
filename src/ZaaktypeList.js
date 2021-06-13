@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { useRouteMatch, Link } from 'react-router-dom';
 
-import { groupBy } from './Utils';
+import { groupBy, UUIDFromUrl } from './Utils';
 
 import './styles/ZaaktypeList.scss';
 
 
-const Zaaktype = ({omschrijving, versions, onClick}) => {
+const Zaaktype = ({omschrijving, versions}) => {
+  const outerMatch = useRouteMatch();
+  const { params: { uuid } } = useRouteMatch(`${outerMatch.path}/zaaktypen/:uuid`);
+
   const [versionsVisible, setVersionsVisible] = useState(false);
   const toggleVersions = () => setVersionsVisible(!versionsVisible);
-
-  const currentZaaktype = null;
 
   return (
     <>
@@ -19,21 +21,23 @@ const Zaaktype = ({omschrijving, versions, onClick}) => {
         className="zaaktype-list__omschrijving"
         title={omschrijving}
         onClick={toggleVersions}>
-        > {omschrijving}
+        > [{versions[0].identificatie}] {omschrijving}
       </span>
       {
         versionsVisible
           ? (
             <ul className="zaaktype-list__versions">
               {versions.map(version => (
-                <li
-                  key={version.url}
-                  className={classnames(
-                    'zaaktype-list__version',
-                    {'zaaktype-list__version--active': version === currentZaaktype}
-                  )}
-                  onClick={() => onClick(version)}>
-                  {version.versiedatum}
+                <li key={version.url}>
+                  <Link
+                    to={`${outerMatch.url}/zaaktypen/${UUIDFromUrl(version.url)}`}
+                    className={classnames(
+                      'zaaktype-list__version',
+                      {'zaaktype-list__version--active': UUIDFromUrl(version.url) === uuid}
+                    )}
+                  >
+                    {version.versiedatum}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -47,10 +51,7 @@ const Zaaktype = ({omschrijving, versions, onClick}) => {
 Zaaktype.propTypes = {
   omschrijving: PropTypes.string.isRequired,
   versions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onClick: PropTypes.func.isRequired,
 };
-
-
 
 const ZaaktypeList = ({ items=[] }) => {
   const groups = groupBy(items, zt => zt.omschrijving);

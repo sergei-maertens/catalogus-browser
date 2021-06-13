@@ -1,20 +1,19 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 
 import { CopyUrl } from './CopyUrl';
 import { CatalogusType } from './prop-types';
 import KeyValue from './KeyValue';
 import ResourceSwitcher from './ResourceSwitcher';
 import ResourceList from './ResourceList';
+import ZaaktypeDetails from './ZaaktypeDetails';
 
 
 const CatalogusDetails = ({catalogi}) => {
-    const { uuid } = useParams();
-
+    const match = useRouteMatch();
     const [selectedResource, setSelectedResource] = useState('zt');
-
-    const catalogus = catalogi[uuid];
+    const catalogus = catalogi[match.params.catalogusUuid];
 
     const resourceOptions = [
       {
@@ -61,7 +60,19 @@ const CatalogusDetails = ({catalogi}) => {
 
         <section style={{display: 'flex', background: 'white', margin: '-.5em', padding: '1em'}}>
           <ResourceList resource={selectedResource} catalogusUrl={catalogus.url} />
-          <div>data panel</div>
+
+          <Switch>
+
+            <Route path={`${match.path}/zaaktypen/:uuid`}>
+              <ZaaktypeDetails />
+            </Route>
+
+            <Route path={match.path}>
+              <div>Select a resource to view.</div>
+            </Route>
+
+          </Switch>
+
         </section>
       </article>
     );
