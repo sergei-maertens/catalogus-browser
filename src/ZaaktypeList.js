@@ -10,7 +10,7 @@ import './styles/ZaaktypeList.scss';
 
 const Zaaktype = ({omschrijving, versions}) => {
   const outerMatch = useRouteMatch();
-  const { params: { uuid } } = useRouteMatch(`${outerMatch.path}/zaaktypen/:uuid`);
+  const innerMatch = useRouteMatch(`${outerMatch.path}/zaaktypen/:uuid`);
 
   const [versionsVisible, setVersionsVisible] = useState(false);
   const toggleVersions = () => setVersionsVisible(!versionsVisible);
@@ -33,7 +33,7 @@ const Zaaktype = ({omschrijving, versions}) => {
                     to={`${outerMatch.url}/zaaktypen/${UUIDFromUrl(version.url)}`}
                     className={classnames(
                       'zaaktype-list__version',
-                      {'zaaktype-list__version--active': UUIDFromUrl(version.url) === uuid}
+                      {'zaaktype-list__version--active': UUIDFromUrl(version.url) === innerMatch?.params?.uuid}
                     )}
                   >
                     {version.versiedatum}
