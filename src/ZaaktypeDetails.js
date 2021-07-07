@@ -7,6 +7,7 @@ import { ClientContext } from './Context';
 import { FetchState } from './FetchState';
 import KeyValue from './KeyValue';
 import DateDisplay from './DateDisplay';
+import DurationDisplay from './DurationDisplay';
 
 
 const ZaaktypeDisplay = ({ zaaktype }) => (
@@ -22,13 +23,17 @@ const ZaaktypeDisplay = ({ zaaktype }) => (
       <section>
 
         <div className="zaaktype__meta">
-          <KeyValue label="Initiator">{zaaktype.handelingInitiator} {zaaktype.onderwerp}</KeyValue>
-          <KeyValue label="Behandelaar">{zaaktype.handelingBehandelaar} {zaaktype.onderwerp}</KeyValue>
-          <KeyValue label="Aanleiding">{zaaktype.aanleiding}</KeyValue>
+          <div className="zaaktype__meta-title">Behandeling</div>
           <KeyValue label="Doel">{zaaktype.doel}</KeyValue>
+          <KeyValue label="Aanleiding">{zaaktype.aanleiding}</KeyValue>
+          <KeyValue label="Initiator">{zaaktype.handelingInitiator} {zaaktype.onderwerp.toLowerCase()}</KeyValue>
+          <KeyValue label="Behandelaar">{zaaktype.handelingBehandelaar} {zaaktype.onderwerp.toLowerCase()}</KeyValue>
+          <KeyValue label="Doorlooptijd"><DurationDisplay duration={zaaktype.doorlooptijd} /></KeyValue>
+          <KeyValue label="Servicenorm">{ zaaktype.serviceNorm ? <DurationDisplay duration={zaaktype.serviceNorm} /> : '-' }</KeyValue>
         </div>
 
         <div className="zaaktype__meta">
+          <KeyValue label="Omschrijving generiek">{zaaktype.omschrijvingGeneriek}</KeyValue>
           <KeyValue label="Versie">
             <DateDisplay date={zaaktype.versiedatum} />
           </KeyValue>
@@ -42,14 +47,19 @@ const ZaaktypeDisplay = ({ zaaktype }) => (
 
         <div className="zaaktype__meta">
           <KeyValue label="Verlenging mogelijk?">{zaaktype.verlengingMogelijk ? 'Ja' : 'Nee'}</KeyValue>
-          { zaaktype.verlengingMogelijk ? <KeyValue label="Verlengingstermijn">{zaaktype.verlengingstermijn}</KeyValue> : null }
+          { zaaktype.verlengingMogelijk ? <KeyValue label="Verlengingstermijn"><DurationDisplay duration={zaaktype.verlengingstermijn} /></KeyValue> : null }
           <KeyValue label="Opschorting en aanhouding mogelijk?">{zaaktype.opschortingEnAanhoudingMogelijk ? 'Ja' : 'Nee'}</KeyValue>
         </div>
       </section>
 
+      <section className="zaaktype__meta">
+        <KeyValue label=""></KeyValue>
+      </section>
+
     </header>
 
-
+    <section>
+    </section>
 
 
   </article>
