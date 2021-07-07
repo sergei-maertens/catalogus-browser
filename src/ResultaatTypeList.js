@@ -26,7 +26,7 @@ const ResultaatType = ({
                 <p>
                     Archiefnominatie: {archiefnominatie}
                     <br />
-                    Archiefactietermijn: {archiefactietermijn}
+                    Archiefactietermijn: {archiefactietermijn ?? '-'}
                 </p>
                 <div style={{overflow: 'auto'}}>
                     <code>{JSON.stringify(brondatumArchiefprocedure)}</code>
@@ -43,9 +43,26 @@ ResultaatType.propTypes = {
     selectielijstklasse: PropTypes.string.isRequired,
     toelichting: PropTypes.string.isRequired,
     archiefnominatie: PropTypes.string.isRequired,
-    archiefactietermijn: PropTypes.string.isRequired,
+    archiefactietermijn: PropTypes.string,
     brondatumArchiefprocedure: PropTypes.object.isRequired,
 };
 
 
-export { ResultaatType };
+
+const ResultaatTypeList = ({ resultaattypen=[] }) => (
+  <ul>
+    {
+      resultaattypen.map( rt => (
+        <li key={rt.url}>
+          <ResultaatType {...rt} />
+        </li>
+      ) )
+    }
+  </ul>
+);
+
+ResultaatTypeList.propTypes = {
+  resultaattypen: PropTypes.arrayOf(PropTypes.shape(ResultaatType.propTypes)),
+};
+
+export default ResultaatTypeList;

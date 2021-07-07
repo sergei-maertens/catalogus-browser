@@ -21,4 +21,5 @@ CopyUrl.propTypes = {
 };
 
 
+export default CopyUrl;
 export { CopyUrl };

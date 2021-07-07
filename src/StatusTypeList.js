@@ -23,19 +23,17 @@ const StatusType = ({ url, omschrijving, omschrijvingGeneriek, statustekst, info
 StatusType.propTypes = StatusTypePropTypes;
 
 
-const StatusTypeList = ({ statustypen=[] }) => {
-    return (
-      <ol className="statustype-list">
-        {
-          statustypen.map(statustype => (
-            <li key={statustype.url} volgnummer={statustype.volgnummer} zero="0">
-              <StatusType {...statustype} />
-            </li>
-          ))
-        }
-      </ol>
-    );
-};
+const StatusTypeList = ({ statustypen=[] }) => (
+  <ol className="statustype-list">
+    {
+      statustypen.map(statustype => (
+        <li key={statustype.url} volgnummer={statustype.volgnummer}>
+          <StatusType {...statustype} />
+        </li>
+      ))
+    }
+  </ol>
+);
 
 StatusTypeList.propTypes = {
     statustypen: PropTypes.arrayOf(PropTypes.shape(StatusTypePropTypes)),

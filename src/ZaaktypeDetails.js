@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import useAsync from 'react-use/esm/useAsync';
 
+import CopyUrl from './CopyUrl';
 import { ClientContext } from './Context';
 import { FetchState } from './FetchState';
 import KeyValue from './KeyValue';
 import DateDisplay from './DateDisplay';
 import DurationDisplay from './DurationDisplay';
+import ZaaktypeChildren from './ZaaktypeChildren';
 import StatusTypeList from './StatusTypeList';
-
+import ResultaatTypeList from './ResultaatTypeList';
 
 const ZaaktypeDisplay = ({ zaaktype }) => (
   <article className="zaaktype">
@@ -18,6 +20,8 @@ const ZaaktypeDisplay = ({ zaaktype }) => (
         {zaaktype.omschrijving}
         <span className="zaaktype__title-addendum"> ({zaaktype.identificatie})</span>
       </h1>
+
+      <p> API URL: <CopyUrl url={zaaktype.url} /> </p>
 
       <p>{zaaktype.toelichting}</p>
 
@@ -55,11 +59,19 @@ const ZaaktypeDisplay = ({ zaaktype }) => (
 
     </header>
 
-    <section className="zaaktype__statustypen">
-      <h2 className="zaaktype__subtitle">Statustypen</h2>
+    <ZaaktypeChildren element="statustypen" title="Statustypen">
       <StatusTypeList statustypen={zaaktype.statustypen} />
-    </section>
+    </ZaaktypeChildren>
 
+    <ZaaktypeChildren element="resultaattypen" title="Resultaattypen">
+      <ResultaatTypeList resultaattypen={zaaktype.resultaattypen} />
+    </ZaaktypeChildren>
+
+    <ZaaktypeChildren element="roltypen" title="Roltypen">
+    </ZaaktypeChildren>
+
+    <ZaaktypeChildren element="eigenschappen" title="Eigenschappen">
+    </ZaaktypeChildren>
 
   </article>
 );
@@ -87,11 +99,11 @@ ZaaktypeDisplay.propTypes = {
     publicatieIndicatie: PropTypes.bool.isRequired,
     publicatietekst: PropTypes.string.isRequired,
     besluittypen: PropTypes.arrayOf(PropTypes.string).isRequired,
-    eigenschappen: PropTypes.arrayOf(PropTypes.string).isRequired,
+    eigenschappen: PropTypes.arrayOf(PropTypes.object).isRequired,
     gerelateerdeZaaktypen: PropTypes.arrayOf(PropTypes.string).isRequired,
     informatieobjecttypen: PropTypes.arrayOf(PropTypes.string).isRequired,
-    resultaattypen: PropTypes.arrayOf(PropTypes.string).isRequired,
-    roltypen: PropTypes.arrayOf(PropTypes.string).isRequired,
+    resultaattypen: PropTypes.arrayOf(PropTypes.object).isRequired,
+    roltypen: PropTypes.arrayOf(PropTypes.object).isRequired,
     statustypen: PropTypes.arrayOf(PropTypes.object).isRequired,
     trefwoorden: PropTypes.arrayOf(PropTypes.string).isRequired,
     productenOfDiensten: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -107,17 +119,35 @@ ZaaktypeDisplay.propTypes = {
 };
 
 
-const ZaaktypeDetails = ({ foo }) => {
+const ZaaktypeDetails = () => {
   const { uuid } = useParams();
   const client = useContext(ClientContext);
 
   const state = useAsync(
     async () => {
       const zaaktype = await client.get(`zaaktypen/${uuid}`);
-      zaaktype.statustypen = await client.getPaginated(
-        `statustypen`,
-        {zaaktype: zaaktype.url, status: 'alles'}
-      );
+
+      // fetch related resources
+      const query = {zaaktype: zaaktype.url, status: 'alles'};
+      const fetchStatustypen = client.getPaginated('statustypen', query);
+      const fetchResultaattypen = client.getPaginated('resultaattypen', query);
+      const fetchRoltypen = client.getPaginated('roltypen', query);
+      const fetchEigenschappen = client.getPaginated('eigenschappen', query);
+
+      const [statustypen, resultaattypen, roltypen, eigenschappen] = await Promise.all([
+          fetchStatustypen,
+          fetchResultaattypen,
+          fetchRoltypen,
+          fetchEigenschappen,
+      ]);
+
+      // assign resolved types
+      zaaktype.statustypen = statustypen;
+      zaaktype.resultaattypen = resultaattypen;
+      zaaktype.roltypen = roltypen;
+      zaaktype.eigenschappen = eigenschappen;
+
+      // finally, return the resolved object
       return zaaktype;
     },
     [uuid]
