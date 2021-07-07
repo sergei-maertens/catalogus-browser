@@ -8,11 +8,12 @@ import { FetchState } from './FetchState';
 import KeyValue from './KeyValue';
 import DateDisplay from './DateDisplay';
 import DurationDisplay from './DurationDisplay';
+import StatusTypeList from './StatusTypeList';
 
 
 const ZaaktypeDisplay = ({ zaaktype }) => (
   <article className="zaaktype">
-    <header classname="zaaktype__header">
+    <header className="zaaktype__header">
       <h1 className="zaaktype__title">
         {zaaktype.omschrijving}
         <span className="zaaktype__title-addendum"> ({zaaktype.identificatie})</span>
@@ -52,13 +53,10 @@ const ZaaktypeDisplay = ({ zaaktype }) => (
         </div>
       </section>
 
-      <section className="zaaktype__meta">
-        <KeyValue label=""></KeyValue>
-      </section>
-
     </header>
 
-    <section>
+    <section className="zaaktype__statustypen">
+      <StatusTypeList statustypen={zaaktype.statustypen} />
     </section>
 
 
@@ -93,7 +91,7 @@ ZaaktypeDisplay.propTypes = {
     informatieobjecttypen: PropTypes.arrayOf(PropTypes.string).isRequired,
     resultaattypen: PropTypes.arrayOf(PropTypes.string).isRequired,
     roltypen: PropTypes.arrayOf(PropTypes.string).isRequired,
-    statustypen: PropTypes.arrayOf(PropTypes.string).isRequired,
+    statustypen: PropTypes.arrayOf(PropTypes.object).isRequired,
     trefwoorden: PropTypes.arrayOf(PropTypes.string).isRequired,
     productenOfDiensten: PropTypes.arrayOf(PropTypes.string).isRequired,
     referentieProces: PropTypes.object,
@@ -115,6 +113,10 @@ const ZaaktypeDetails = ({ foo }) => {
   const state = useAsync(
     async () => {
       const zaaktype = await client.get(`zaaktypen/${uuid}`);
+      zaaktype.statustypen = await client.getPaginated(
+        `statustypen`,
+        {zaaktype: zaaktype.url, status: 'alles'}
+      );
       return zaaktype;
     }
   );
