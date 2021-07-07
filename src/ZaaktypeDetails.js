@@ -56,6 +56,7 @@ const ZaaktypeDisplay = ({ zaaktype }) => (
     </header>
 
     <section className="zaaktype__statustypen">
+      <h2 className="zaaktype__subtitle">Statustypen</h2>
       <StatusTypeList statustypen={zaaktype.statustypen} />
     </section>
 
@@ -118,7 +119,8 @@ const ZaaktypeDetails = ({ foo }) => {
         {zaaktype: zaaktype.url, status: 'alles'}
       );
       return zaaktype;
-    }
+    },
+    [uuid]
   );
 
   return (
